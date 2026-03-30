@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Spam Chat Pro - Ultimate Horror Edition</title>
+    <style>
+        /* GLOBAL RESET & FONT */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at center, #0a0a0a 0%, #000000 100%);
+            overflow-x: hidden;
+        }
+
+        /* ---------- LOGIN OVERLAY (FULLSCREEN DENGAN EFEK HANTU 3D) ---------- */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at 30% 40%, #1a0505, #000000);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+            transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+            overflow: hidden;
+        }
+
+        /* Efek hantu bergerak (floating ghost) */
+        .ghost-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .ghost {
+            position: absolute;
+            background: rgba(220, 220, 255, 0.15);
+            border-radius: 60% 40% 50% 50%;
+            filter: blur(8px);
+            box-shadow: 0 0 30px rgba(255, 0, 100, 0.5), inset 0 0 20px rgba(255, 255, 200, 0.3);
+            animation: floatGhost 8s infinite ease-in-out;
+            z-index: 0;
+        }
+
+        @keyframes floatGhost {
+            0% { transform: translateY(0px) translateX(0) rotate(0deg); opacity: 0.4; }
+            50% { transform: translateY(-35px) translateX(20px) rotate(5deg); opacity: 0.8; }
+            100% { transform: translateY(0px) translateX(0) rotate(0deg); opacity: 0.4; }
+        }
+
+        .ghost1 { width: 150px; height: 180px; top: 15%; left: 5%; animation-duration: 7s; background: radial-gradient(circle, #ff99cc55, #ff336655); }
+        .ghost2 { width: 200px; height: 240px; bottom: 10%; right: 8%; animation-duration: 9s; animation-delay: 1s; background: radial-gradient(circle, #aa88ff66, #7700aa66); }
+        .ghost3 { width: 120px; height: 150px; top: 50%; left: 80%; animation-duration: 6s; animation-delay: 2s; background: radial-gradient(circle, #ff6666aa, #cc0000aa); }
+        .ghost4 { width: 180px; height: 210px; bottom: 20%; left: 20%; animation-duration: 11s; animation-delay: 0.5s; background: radial-gradient(circle, #9b59b6aa, #2c3e66aa); }
+        .ghost5 { width: 90px; height: 110px; top: 70%; left: 45%; animation-duration: 5s; animation-delay: 3s; background: #ff3366aa; }
+        .ghost6 { width: 260px; height: 280px; top: -5%; right: 25%; animation-duration: 14s; opacity: 0.3; background: radial-gradient(#ff00aa33, #6600ff33); }
+
+        /* Kotak login 3D dengan efek mengerikan */
+        .login-card {
+            position: relative;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            padding: 2.2rem 2rem;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 30px 45px rgba(0, 0, 0, 0.7), 0 0 0 3px rgba(255, 0, 50, 0.6), 0 0 25px 8px rgba(255, 0, 0, 0.5);
+            transform: rotateX(3deg) rotateY(2deg) perspective(1000px);
+            transition: 0.2s;
+            border: 1px solid rgba(255, 80, 80, 0.6);
+            animation: borderPulse 1.8s infinite alternate;
+        }
+
+        @keyframes borderPulse {
+            0% { box-shadow: 0 0 0 2px rgba(255, 0, 50, 0.6), 0 0 15px 2px rgba(255, 0, 0, 0.4); border-color: #ff3366aa; }
+            100% { box-shadow: 0 0 0 5px rgba(255, 0, 80, 0.9), 0 0 40px 12px rgba(255, 0, 0, 0.8); border-color: #ff0000; }
+        }
+
+        .login-card h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff4d4d, #cc0000, #660000);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 8px rgba(255, 0, 0, 0.7);
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #ffaaaadd;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            margin-bottom: 1.8rem;
+            text-shadow: 0 0 3px red;
+        }
+
+        .input-group {
+            margin-bottom: 1.4rem;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            color: #ffb7b7;
+            font-weight: 500;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        .input-group input {
+            width: 100%;
+            background: #1e1a1fdd;
+            border: 1px solid #aa2e2e;
+            padding: 12px 16px;
+            border-radius: 2rem;
+            color: #ffe6e6;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.2s;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.5);
+        }
+
+        .input-group input:focus {
+            border-color: #ff5555;
+            box-shadow: 0 0 12px #ff0000aa, inset 0 0 5px #ff0000;
+        }
+
+        .login-btn {
+            background: linear-gradient(95deg, #aa2e2e, #4a0000);
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 3rem;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #fff0f0;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
+            letter-spacing: 2px;
+        }
+
+        .login-btn:hover {
+            background: linear-gradient(95deg, #dd3a3a, #7a0000);
+            transform: scale(1.02);
+            box-shadow: 0 0 20px red;
+        }
+
+        .error-msg {
+            color: #ff8888;
+            background: #330000aa;
+            padding: 6px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            margin-top: 12px;
+            backdrop-filter: blur(4px);
+        }
+
+        /* efek darah menetes (pseudo) */
+        .login-card::before {
+            content: "💀";
+            position: absolute;
+            top: -30px;
+            left: -20px;
+            font-size: 55px;
+            opacity: 0.6;
+            filter: drop-shadow(0 0 6px red);
+            animation: shakeSkull 3s infinite;
+        }
+
+        .login-card::after {
+            content: "🩸";
+            position: absolute;
+            bottom: -20px;
+            right: -20px;
+            font-size: 48px;
+            opacity: 0.5;
+            filter: drop-shadow(0 0 5px crimson);
+            animation: drip 2s infinite;
+        }
+
+        @keyframes shakeSkull {
+            0%,100% { transform: rotate(0deg); }
+            25% { transform: rotate(8deg); }
+            75% { transform: rotate(-6deg); }
+        }
+        @keyframes drip {
+            0% { transform: translateY(0); opacity: 0.3;}
+            100% { transform: translateY(12px); opacity: 0.9;}
+        }
+
+        /* ---------- MAIN APP (SPAM WEB) ---------- */
+        .main-app {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.6s ease, visibility 0.6s;
+            padding: 20px;
+            background: radial-gradient(circle at 20% 30%, #0f172f, #03050b);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main-app.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .spam-container {
+            max-width: 1100px;
+            width: 100%;
+            background: rgba(15, 25, 45, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 2.2rem;
+            padding: 1.6rem;
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(220, 60, 60, 0.4);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFD966, #FF8C42, #FF3D6C);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-align: center;
+        }
+
+        .grid-3col {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        .card-panel {
+            background: #0b1120cc;
+            border-radius: 1.5rem;
+            padding: 1rem 1.2rem;
+            border: 1px solid #5a3a3a;
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .label-icon {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #facc15;
+            margin-bottom: 12px;
+        }
+
+        input, select, .emoji-grid button {
+            width: 100%;
+            background: #010514dd;
+            border: 1px solid #7a4a4a;
+            padding: 10px 14px;
+            border-radius: 1rem;
+            color: #f1f5f9;
+            font-size: 0.95rem;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        .style-preview {
+            background: #00000055;
+            border-radius: 1rem;
+            padding: 12px;
+            margin-top: 12px;
+            text-align: center;
+            border: 1px dashed #ff9966;
+        }
+
+        .emoji-section {
+            margin-top: 12px;
+        }
+
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+            gap: 8px;
+            max-height: 180px;
+            overflow-y: auto;
+            padding: 8px;
+            background: #00000044;
+            border-radius: 1rem;
+            margin-top: 8px;
+        }
+
+        .emoji-grid button {
+            background: #1f2a3e;
+            border: none;
+            font-size: 1.5rem;
+            padding: 8px;
+            cursor: pointer;
+            transition: 0.1s;
+            border-radius: 12px;
+        }
+
+        .emoji-grid button:hover {
+            background: #ff5555;
+            transform: scale(1.05);
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 15px 0 20px;
+        }
+
+        button {
+            background: linear-gradient(105deg, #f97316, #facc15);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.02);
+            filter: brightness(1.05);
+        }
+
+        .btn-secondary {
+            background: #2d3a5e;
+            color: #FFE6B3;
+        }
+
+        .btn-danger {
+            background: linear-gradient(95deg, #b91c1c, #7f1a1a);
+            color: white;
+        }
+
+        .output-box {
+            background: #030617;
+            border-radius: 1.4rem;
+            padding: 1rem;
+        }
+
+        .preview-scroll {
+            background: #00000077;
+            border-radius: 1.2rem;
+            padding: 16px;
+            max-height: 320px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #ddd;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #ffbb99;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .warning {
+            font-size: 0.7rem;
+            text-align: center;
+            background: #1e1a2f80;
+            border-radius: 30px;
+            padding: 6px;
+            margin-top: 12px;
+            color: #facc15aa;
+        }
+        footer {
+            font-size: 0.65rem;
+            text-align: center;
+            color: #7a6e8c;
+            margin-top: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN OVERLAY SERAM + HANTU 3D -->
+<div id="loginOverlay" class="login-overlay">
+    <div class="ghost-bg">
+        <div class="ghost ghost1"></div>
+        <div class="ghost ghost2"></div>
+        <div class="ghost ghost3"></div>
+        <div class="ghost ghost4"></div>
+        <div class="ghost ghost5"></div>
+        <div class="ghost ghost6"></div>
+    </div>
+    <div class="login-card">
+        <h2>👻 LOGIN SPAM ZONE 👻</h2>
+        <div class="subtitle">⚠️ ENTER IF YOU DARE ⚠️</div>
+        <div class="input-group">
+            <label>💀 USERNAME</label>
+            <input type="text" id="loginUser" placeholder="pemilik" autocomplete="off">
+        </div>
+        <div class="input-group">
+            <label>🔮 PASSWORD</label>
+            <input type="password" id="loginPass" placeholder="********">
+        </div>
+        <button id="loginBtn" class="login-btn">☠️ MASUK KE DUNIA SPAM ☠️</button>
+        <div id="loginError" class="error-msg" style="display: none;">❌ USER/PASSWORD SALAH! ❌</div>
+        <div style="margin-top: 15px; font-size: 0.7rem; color: #aa5555;">test: PRIVAT</div>
+    </div>
+</div>
+
+<!-- MAIN APLIKASI SPAM (YANG AKAN MUNCUL SETELAH LOGIN) -->
+<div id="mainApp" class="main-app">
+    <div class="spam-container">
+        <h1>✨ SPAM CHAT PRO ULTIMATE ✨</h1>
+        <div style="text-align: center;"><div class="badge" style="color:#ffaa77;">「 20+ GAYA HURUF + RATUSAN EMOT 」</div></div>
+
+        <div class="grid-3col">
+            <!-- Panel 1: Kata dasar & jumlah -->
+            <div class="card-panel">
+                <div class="label-icon"><span>🔤</span> Kata / Huruf Dasar</div>
+                <input type="text" id="baseChar" placeholder="Contoh: A, B, atau 'Halo'" value="A">
+                <div class="label-icon" style="margin-top: 12px;"><span>🔢</span> Jumlah Spam</div>
+                <input type="number" id="spamCount" value="1000" step="100" min="1" max="999999">
+                <div class="label-icon" style="margin-top: 12px;"><span>⚙️</span> Separator</div>
+                <select id="separator">
+                    <option value="space">Spasi (A A A)</option>
+                    <option value="newline">Baris baru</option>
+                    <option value="comma">Koma + spasi</option>
+                    <option value="none">Tanpa pemisah</option>
+                    <option value="dot">Titik + spasi</option>
+                </select>
+            </div>
+            <!-- Panel 2: Gaya Huruf (20+ gaya) & Awalan Akhiran -->
+            <div class="card-panel">
+                <div class="label-icon"><span>🎨</span> Gaya Huruf (20+ Style)</div>
+                <select id="fontStyle">
+                    <option value="normal">Normal</option>
+                    <option value="bold">Tebal **teks**</option>
+                    <option value="italic">Miring _teks_</option>
+                    <option value="strike">Coret ~~teks~~</option>
+                    <option value="smallcaps">Small Caps</option>
+                    <option value="superscript">Superscript</option>
+                    <option value="subscript">Subscript</option>
+                    <option value="monospace">Monospace</option>
+                    <option value="cursive">Cursive (𝒮𝒸𝓇𝒾𝓅𝓉)</option>
+                    <option value="doublestruck">Double struck (𝔸𝔹ℂ)</option>
+                    <option value="fraktur">Fraktur (𝔄𝔅ℭ)</option>
+                    <option value="bubble">Bubble Ⓑⓤⓑ</option>
+                    <option value="squared">Squared 🄰🄱🄲</option>
+                    <option value="upside">Terbalik (upside down)</option>
+                    <!-- 10 gaya tambahan! -->
+                    <option value="boldfraktur">Bold Fraktur (𝖆𝖇𝖈)</option>
+                    <option value="boldcursive">Bold Cursive (𝓪𝓫𝓬)</option>
+                    <option value="monospace_sans">Mono Sans (𝙰𝙱𝙲)</option>
+                    <option value="doublebar">Double Bar (𝕒𝕓𝕔)</option>
+                    <option value="wavy">Wavy Underline</option>
+                    <option value="glitch">Glitch Effect (Zalgo)</option>
+                    <option value="rainbow">🌈 Rainbow Emoji Style</option>
+                    <option value="smallcaps_bold">Small Caps Bold</option>
+                    <option value="mirror">Mirror Text (ↃᗺA)</option>
+                    <option value="zalgotext">Zalgo Mengerikan</option>
+                </select>
+                <div class="label-icon" style="margin-top: 12px;"><span>✨</span> Awalan & Akhiran</div>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="prefix" placeholder="Awalan" style="width:50%">
+                    <input type="text" id="suffix" placeholder="Akhiran" style="width:50%">
+                </div>
+                <div class="style-preview" id="livePreviewStyle">📝 Preview: <span id="previewTextSpan">A</span></div>
+            </div>
+            <!-- Panel 3: EMOTICON MENU BERBAGAI MACAM -->
+            <div class="card-panel">
+                <div class="label-icon"><span>😈</span> Menu Emot (Klik untuk Tambah)</div>
+                <div class="emoji-section">
+                    <div class="emoji-grid" id="emojiGrid">
+                        <!-- akan diisi javascript dengan ratusan emot -->
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-top: 8px;">
+                        <input type="text" id="customEmoji" placeholder="➕ Tambah emot sendiri" style="flex:1">
+                        <button id="addEmojiBtn" style="width:auto; background:#f97316;">Tambah</button>
+                    </div>
+                </div>
+                <div class="label-icon" style="margin-top: 10px;"><span>📎</span> Tempel ke Kata Dasar</div>
+                <button id="appendEmojiToBase" class="btn-secondary" style="font-size:0.8rem;">✨ Tambah Emot ke Kata Dasar</button>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button id="generateBtn">🚀 GENERATE SPAM MASSAL</button>
+            <button id="copyBtn" class="btn-secondary">📋 Salin Semua Teks</button>
+            <button id="clearBtn" class="btn-danger">🗑️ Bersihkan Output</button>
+        </div>
+
+        <div class="output-box">
+            <div class="stats-bar"><span>📦 HASIL SPAM</span><span id="charCountDisplay">0 karakter</span><span id="wordCountDisplay">0 blok</span></div>
+            <div class="preview-scroll" id="outputPreview">💀 Silakan generate spam setelah login 💀</div>
+            <button id="copyPreviewBtn" style="margin-top: 12px; background:#2d3a5e; width:100%;">📎 Copy dari hasil</button>
+        </div>
+        <div class="warning">⚠️ Hanya untuk kreativitas. Jangan merusak platform orang lain.</div>
+        <footer>✨ Support hingga 500.000 spam | 20+ Gaya Huruf + Ratusan Emot | Login: spameru/eru666666</footer>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ---------- LOGIN HANDLER ----------
+        const loginOverlay = document.getElementById('loginOverlay');
+        const mainApp = document.getElementById('mainApp');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginUser = document.getElementById('loginUser');
+        const loginPass = document.getElementById('loginPass');
+        const loginErrorDiv = document.getElementById('loginError');
+
+        const VALID_USER = "spameru";
+        const VALID_PASS = "eru666666";
+
+        function doLogin() {
+            const user = loginUser.value.trim();
+            const pass = loginPass.value.trim();
+            if (user === VALID_USER && pass === VALID_PASS) {
+                loginErrorDiv.style.display = "none";
+                loginOverlay.style.opacity = "0";
+                loginOverlay.style.visibility = "hidden";
+                setTimeout(() => {
+                    loginOverlay.style.display = "none";
+                    mainApp.classList.add("show");
+                }, 500);
+                setTimeout(() => {
+                    generateSpam();
+                }, 200);
+            } else {
+                loginErrorDiv.style.display = "block";
+                setTimeout(() => {
+                    loginErrorDiv.style.opacity = "0.5";
+                }, 1500);
+                setTimeout(() => {
+                    loginErrorDiv.style.display = "none";
+                    loginErrorDiv.style.opacity = "1";
+                }, 3000);
+                const card = document.querySelector('.login-card');
+                card.style.transform = "rotateX(5deg) rotateY(4deg) translateX(5px)";
+                setTimeout(() => card.style.transform = "", 200);
+            }
+        }
+
+        loginBtn.addEventListener('click', doLogin);
+        [loginUser, loginPass].forEach(inp => inp.addEventListener('keypress', (e) => { if(e.key === 'Enter') doLogin(); }));
+
+        // ---------- DAFTAR EMOTIKON SUPER LENGKAP ----------
+        const emojiCategories = [
+            "😀","😃","😄","😁","😆","😅","😂","🤣","😊","😇","🙂","🙃","😉","😌","😍","🥰","😘","😗","😙","😚","😋","😛","😝","😜","🤪","🤨","🧐","🤓","😎","🤩","🥳","😏","😒","😞","😔","😟","😕","🙁","☹️","😣","😖","😫","😩","🥺","😢","😭","😤","😠","😡","🤬","🤯","😳","🥵","🥶","😱","😨","😰","😥","😓","🤗","🤔","🤭","🤫","🤥","😶","😐","😑","😬","🙄","😯","😦","😧","😮","😲","🥱","😴","🤤","😪","😵","🤐","🥴","🤢","🤮","🤧","😷","🤒","🤕","🤑","🤠","😈","👿","👹","👺","💀","👻","👽","🤖","💩","😺","😸","😹","😻","😼","😽","🙀","😿","😾","❤️","🧡","💛","💚","💙","💜","🖤","🤍","🤎","💔","❣️","💕","💞","💓","💗","💖","💘","💝","💟","☮️","✝️","☪️","🕉️","☸️","✡️","🔯","🕎","☯️","☦️","🛐","⛎","♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓","🆔","⚛️","🉑","☢️","☣️","📴","📳","🈶","🈚","🈸","🈺","🈷️","✴️","🆚","💮","🉐","㊙️","㊗️","🈴","🈵","🈹","🈲","🅰️","🅱️","🆎","🆑","🅾️","🆘","❌","⭕","💢","♨️","‼️","⁉️","❓","❔","❕","❗","🔞","🚫","🚯","🚳","🚭","🚱","📵","🔞","💯","🔅","🔆","🔱","🚸","⚠️","🚧","🔰","♻️","💹","💠","🌀","♿","🏧","💤","💨","💦","💫","💥","💢","🕳️","💣","💬","👁️‍🗨️","🗨️","🗯️","💭","💤","🎌","🏮","⚜️","🔔","🔕","✉️","📩","📨","📧","💌","📮","📪","📫","📬","📭","📦","📯","📜","📃","📄","📑","📊","📈","📉","📏","📐","✂️","📌","📍","📎","✒️","✏️","📝","🔍","🔎","🔏","🔐","🔒","🔓"
+        ];
+        // tambah variasi keren
+        const extraEmoji = ["🔥","⭐","🌟","✨","⚡","☄️","💥","💢","🌀","🌊","🌈","🍀","🎉","🎊","🎈","🎁","🔪","🩸","🕯️","👾","🎃","🧛","🧟","🦇","🐉","👑","💎","🚀","🛸","💀","👁️","🧠","💪","🦷","🧙","🧚","🧜","🧝","🦄","🐲"];
+        const allEmojis = [...emojiCategories, ...extraEmoji];
+        
+        // render grid emoji
+        const emojiGrid = document.getElementById('emojiGrid');
+        function buildEmojiGrid() {
+            emojiGrid.innerHTML = '';
+            allEmojis.forEach(emo => {
+                const btn = document.createElement('button');
+                btn.textContent = emo;
+                btn.style.fontSize = '1.4rem';
+                btn.addEventListener('click', () => {
+                    // menambahkan ke baseChar dengan cara menempel di akhir atau awal? kita tambah ke input dasar
+                    const baseInput = document.getElementById('baseChar');
+                    baseInput.value = baseInput.value + emo;
+                    updatePreview();
+                });
+                emojiGrid.appendChild(btn);
+            });
+        }
+        buildEmojiGrid();
+
+        // tambah custom emoji
+        const customEmojiInput = document.getElementById('customEmoji');
+        const addEmojiBtn = document.getElementById('addEmojiBtn');
+        addEmojiBtn.addEventListener('click', () => {
+            let newEmoji = customEmojiInput.value.trim();
+            if(newEmoji && !allEmojis.includes(newEmoji)) {
+                allEmojis.push(newEmoji);
+                buildEmojiGrid();
+                customEmojiInput.value = '';
+            } else if(newEmoji && allEmojis.includes(newEmoji)) alert("Emoji sudah ada!");
+            else alert("Masukkan emoji yang valid.");
+        });
+        
+        // tombol tempel emot ke kata dasar
+        document.getElementById('appendEmojiToBase').addEventListener('click', () => {
+            const selectedEmoji = prompt("Ketik atau pilih emoji (contoh 😈🔥) atau kosongkan:", "😈🔥");
+            if(selectedEmoji) {
+                const baseInput = document.getElementById('baseChar');
+                baseInput.value = baseInput.value + selectedEmoji;
+                updatePreview();
+            }
+        });
+
+        // ---------- ENGINE SPAM DENGAN 20+ GAYA HURUF ----------
+        const baseInput = document.getElementById('baseChar');
+        const countInput = document.getElementById('spamCount');
+        const separatorSelect = document.getElementById('separator');
+        const fontStyleSelect = document.getElementById('fontStyle');
+        const prefixInput = document.getElementById('prefix');
+        const suffixInput = document.getElementById('suffix');
+        const generateBtn = document.getElementById('generateBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const copyPreviewBtn = document.getElementById('copyPreviewBtn');
+        const outputPreviewDiv = document.getElementById('outputPreview');
+        const charCountSpan = document.getElementById('charCountDisplay');
+        const wordCountSpan = document.getElementById('wordCountDisplay');
+        const previewTextSpan = document.getElementById('previewTextSpan');
+
+        // Fungsi gaya huruf lengkap (termasuk 10 tambahan)
+        function applyFontStyle(text, styleType) {
+            if (!text) return text;
+            if (styleType === 'normal') return text;
+            if (styleType === 'bold') return `**${text}**`;
+            if (styleType === 'italic') return `_${text}_`;
+            if (styleType === 'strike') return `~~${text}~~`;
+            if (styleType === 'monospace') return `\`${text}\``;
+            if (styleType === 'smallcaps') return text.toUpperCase();
+            if (styleType === 'superscript') {
+                const supMap = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','a':'ᵃ','b':'ᵇ','c':'ᶜ','d':'ᵈ','e':'ᵉ','f':'ᶠ','g':'ᵍ','h':'ʰ','i':'ⁱ','j':'ʲ','k':'ᵏ','l':'ˡ','m':'ᵐ','n':'ⁿ','o':'ᵒ','p':'ᵖ','q':'ᑫ','r':'ʳ','s':'ˢ','t':'ᵗ','u':'ᵘ','v':'ᵛ','w':'ʷ','x':'ˣ','y':'ʸ','z':'ᶻ','A':'ᴬ','B':'ᴮ','C':'ᶜ','D':'ᴰ','E':'ᴱ','F':'ᶠ','G':'ᴳ','H':'ᴴ','I':'ᴵ','J':'ᴶ','K':'ᴷ','L':'ᴸ','M':'ᴹ','N':'ᴺ','O':'ᴼ','P':'ᴾ','Q':'Q','R':'ᴿ','S':'ˢ','T':'ᵀ','U':'ᵁ','V':'ⱽ','W':'ᵂ','X':'ˣ','Y':'ʸ','Z':'ᶻ'};
+                return text.split('').map(ch => supMap[ch] || ch).join('');
+            }
+            if (styleType === 'subscript') {
+                const subMap = {'0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉','a':'ₐ','e':'ₑ','o':'ₒ','x':'ₓ','h':'ₕ','k':'ₖ','l':'ₗ','m':'ₘ','n':'ₙ','p':'ₚ','r':'ᵣ','s':'ₛ','t':'ₜ','u':'ᵤ','v':'ᵥ'};
+                return text.split('').map(ch => subMap[ch] || ch).join('');
+            }
+            if (styleType === 'cursive') {
+                const cmap = {'A':'𝒜','B':'ℬ','C':'𝒞','D':'𝒟','E':'ℰ','F':'ℱ','G':'𝒢','H':'ℋ','I':'ℐ','J':'𝒥','K':'𝒦','L':'ℒ','M':'ℳ','N':'𝒩','O':'𝒪','P':'𝒫','Q':'𝒬','R':'ℛ','S':'𝒮','T':'𝒯','U':'𝒰','V':'𝒱','W':'𝒲','X':'𝒳','Y':'𝒴','Z':'𝒵','a':'𝒶','b':'𝒷','c':'𝒸','d':'𝒹','e':'ℯ','f':'𝒻','g':'ℊ','h':'𝒽','i':'𝒾','j':'𝒿','k':'𝓀','l':'𝓁','m':'𝓂','n':'𝓃','o':'ℴ','p':'𝓅','q':'𝓆','r':'𝓇','s':'𝓈','t':'𝓉','u':'𝓊','v':'𝓋','w':'𝓌','x':'𝓍','y':'𝓎','z':'𝓏'};
+                return text.split('').map(ch => cmap[ch] || ch).join('');
+            }
+            if (styleType === 'doublestruck') {
+                const ds = {'A':'𝔸','B':'𝔹','C':'ℂ','D':'𝔻','E':'𝔼','F':'𝔽','G':'𝔾','H':'ℍ','I':'𝕀','J':'𝕁','K':'𝕂','L':'𝕃','M':'𝕄','N':'ℕ','O':'𝕆','P':'ℙ','Q':'ℚ','R':'ℝ','S':'𝕊','T':'𝕋','U':'𝕌','V':'𝕍','W':'𝕎','X':'𝕏','Y':'𝕐','Z':'ℤ','a':'𝕒','b':'𝕓','c':'𝕔','d':'𝕕','e':'𝕖','f':'𝕗','g':'𝕘','h':'𝕙','i':'𝕚','j':'𝕛','k':'𝕜','l':'𝕝','m':'𝕞','n':'𝕟','o':'𝕠','p':'𝕡','q':'𝕢','r':'𝕣','s':'𝕤','t':'𝕥','u':'𝕦','v':'𝕧','w':'𝕨','x':'𝕩','y':'𝕪','z':'𝕫'};
+                return text.split('').map(ch => ds[ch] || ch).join('');
+            }
+            if (styleType === 'fraktur') {
+                const f = {'A':'𝔄','B':'𝔅','C':'ℭ','D':'𝔇','E':'𝔈','F':'𝔉','G':'𝔊','H':'ℌ','I':'ℑ','J':'𝔍','K':'𝔎','L':'𝔏','M':'𝔐','N':'𝔑','O':'𝔒','P':'𝔓','Q':'𝔔','R':'ℜ','S':'𝔖','T':'𝔗','U':'𝔘','V':'𝔙','W':'𝔚','X':'𝔛','Y':'𝔜','Z':'ℨ','a':'𝔞','b':'𝔟','c':'𝔠','d':'𝔡','e':'𝔢','f':'𝔣','g':'𝔤','h':'𝔥','i':'𝔦','j':'𝔧','k':'𝔨','l':'𝔩','m':'𝔪','n':'𝔫','o':'𝔬','p':'𝔭','q':'𝔮','r':'𝔯','s':'𝔰','t':'𝔱','u':'𝔲','v':'𝔳','w':'𝔴','x':'𝔵','y':'𝔶','z':'𝔷'};
+                return text.split('').map(ch => f[ch] || ch).join('');
+            }
+            if (styleType === 'bubble') { const b = {'A':'Ⓐ','B':'Ⓑ','C':'Ⓒ','D':'Ⓓ','E':'Ⓔ','F':'Ⓕ','G':'Ⓖ','H':'Ⓗ','I':'Ⓘ','J':'Ⓙ','K':'Ⓚ','L':'Ⓛ','M':'Ⓜ','N':'Ⓝ','O':'Ⓞ','P':'Ⓟ','Q':'Ⓠ','R':'Ⓡ','S':'Ⓢ','T':'Ⓣ','U':'Ⓤ','V':'Ⓥ','W':'Ⓦ','X':'Ⓧ','Y':'Ⓨ','Z':'Ⓩ','a':'ⓐ','b':'ⓑ','c':'ⓒ','d':'ⓓ','e':'ⓔ','f':'ⓕ','g':'ⓖ','h':'ⓗ','i':'ⓘ','j':'ⓙ','k':'ⓚ','l':'ⓛ','m':'ⓜ','n':'ⓝ','o':'ⓞ','p':'ⓟ','q':'ⓠ','r':'ⓡ','s':'ⓢ','t':'ⓣ','u':'ⓤ','v':'ⓥ','w':'ⓦ','x':'ⓧ','y':'ⓨ','z':'ⓩ'}; return text.split('').map(ch=>b[ch]||ch).join('');}
+            if (styleType === 'squared') { const sq = {'A':'🄰','B':'🄱','C':'🄲','D':'🄳','E':'🄴','F':'🄵','G':'🄶','H':'🄷','I':'🄸','J':'🄹','K':'🄺','L':'🄻','M':'🄼','N':'🄽','O':'🄾','P':'🄿','Q':'🅀','R':'🅁','S':'🅂','T':'🅃','U':'🅄','V':'🅅','W':'🅆','X':'🅇','Y':'🅈','Z':'🅉'}; return text.split('').map(ch=>sq[ch]||ch).join('');}
+            if (styleType === 'upside') {
+                const um = {'a':'ɐ','b':'q','c':'ɔ','d':'p','e':'ǝ','f':'ɟ','g':'ɓ','h':'ɥ','i':'ı','j':'ɾ','k':'ʞ','l':'l','m':'ɯ','n':'u','o':'o','p':'d','q':'b','r':'ɹ','s':'s','t':'ʇ','u':'n','v':'ʌ','w':'ʍ','x':'x','y':'ʎ','z':'z','A':'Ɐ','B':'ꓭ','C':'Ɔ','D':'ᗡ','E':'Ǝ','F':'ꓞ','G':'⅁','H':'H','I':'I','J':'ſ','K':'ꓘ','L':'⅂','M':'W','N':'N','O':'O','P':'ꓒ','Q':'ꓐ','R':'ꓤ','S':'S','T':'ꓕ','U':'∩','V':'Λ','W':'M','X':'X','Y':'⅄','Z':'Z'};
+                return text.split('').map(ch=>um[ch]||ch).reverse().join('');
+            }
+            // gaya tambahan
+            if (styleType === 'boldfraktur') {
+                const bf = {'A':'𝕬','B':'𝕭','C':'𝕮','D':'𝕯','E':'𝕰','F':'𝕱','G':'𝕲','H':'𝕳','I':'𝕴','J':'𝕵','K':'𝕶','L':'𝕷','M':'𝕸','N':'𝕹','O':'𝕺','P':'𝕻','Q':'𝕼','R':'𝕽','S':'𝕾','T':'𝕿','U':'𝖀','V':'𝖁','W':'𝖂','X':'𝖃','Y':'𝖄','Z':'𝖅','a':'𝖆','b':'𝖇','c':'𝖈','d':'𝖉','e':'𝖊','f':'𝖋','g':'𝖌','h':'𝖍','i':'𝖎','j':'𝖏','k':'𝖐','l':'𝖑','m':'𝖒','n':'𝖓','o':'𝖔','p':'𝖕','q':'𝖖','r':'𝖗','s':'𝖘','t':'𝖙','u':'𝖚','v':'𝖛','w':'𝖜','x':'𝖝','y':'𝖞','z':'𝖟'};
+                return text.split('').map(ch=>bf[ch]||ch).join('');
+            }
+            if (styleType === 'boldcursive') {
+                const bc = {'A':'𝓐','B':'𝓑','C':'𝓒','D':'𝓓','E':'𝓔','F':'𝓕','G':'𝓖','H':'𝓗','I':'𝓘','J':'𝓙','K':'𝓚','L':'𝓛','M':'𝓜','N':'𝓝','O':'𝓞','P':'𝓟','Q':'𝓠','R':'𝓡','S':'𝓢','T':'𝓣','U':'𝓤','V':'𝓥','W':'𝓦','X':'𝓧','Y':'𝓨','Z':'𝓩','a':'𝓪','b':'𝓫','c':'𝓬','d':'𝓭','e':'𝓮','f':'𝓯','g':'𝓰','h':'𝓱','i':'𝓲','j':'𝓳','k':'𝓴','l':'𝓵','m':'𝓶','n':'𝓷','o':'𝓸','p':'𝓹','q':'𝓺','r':'𝓻','s':'𝓼','t':'𝓽','u':'𝓾','v':'𝓿','w':'𝔀','x':'𝔁','y':'𝔂','z':'𝔃'};
+                return text.split('').map(ch=>bc[ch]||ch).join('');
+            }
+            if (styleType === 'monospace_sans') {
+                const ms = {'A':'𝙰','B':'𝙱','C':'𝙲','D':'𝙳','E':'𝙴','F':'𝙵','G':'𝙶','H':'𝙷','I':'𝙸','J':'𝙹','K':'𝙺','L':'𝙻','M':'𝙼','N':'𝙽','O':'𝙾','P':'𝙿','Q':'𝚀','R':'𝚁','S':'𝚂','T':'𝚃','U':'𝚄','V':'𝚅','W':'𝚆','X':'𝚇','Y':'𝚈','Z':'𝚉','a':'𝚊','b':'𝚋','c':'𝚌','d':'𝚍','e':'𝚎','f':'𝚏','g':'𝚐','h':'𝚑','i':'𝚒','j':'𝚓','k':'𝚔','l':'𝚕','m':'𝚖','n':'𝚗','o':'𝚘','p':'𝚙','q':'𝚚','r':'𝚛','s':'𝚜','t':'𝚝','u':'𝚞','v':'𝚟','w':'𝚠','x':'𝚡','y':'𝚢','z':'𝚣'};
+                return text.split('').map(ch=>ms[ch]||ch).join('');
+            }
+            if (styleType === 'glitch') return text.split('').map(c=>c+Math.random()>0.7?'̴':'̸').join('');
+            if (styleType === 'rainbow') return `🌈${text}🌈✨`;
+            if (styleType === 'smallcaps_bold') return text.toUpperCase().split('').join(' ');
+            if (styleType === 'mirror') return text.split('').reverse().join('');
+            if (styleType === 'zalgotext') return text.split('').map(c=>c+Math.random()>0.5?'̷̲̩':'͓̹̽').join('');
+            return text;
+        }
+
+        function getSeparator(sepType) {
+            switch(sepType) { case 'space': return ' '; case 'newline': return '\n'; case 'comma': return ', '; case 'none': return ''; case 'dot': return '. '; default: return ' '; }
+        }
+
+        function generateSpamText(baseRaw, count, separatorType, prefixStr, suffixStr, styleType) {
+            if (count <= 0) return "";
+            const styledBase = applyFontStyle(baseRaw, styleType);
+            const finalUnit = (prefixStr ? prefixStr : "") + styledBase + (suffixStr ? suffixStr : "");
+            const separator = getSeparator(separatorType);
+            const arr = new Array(count);
+            for (let i = 0; i < count; i++) arr[i] = finalUnit;
+            return arr.join(separator);
+        }
+
+        let currentSpamResult = "";
+        function updateStats(text) { let len = text.length; let wc = text.trim().length ? text.trim().split(/\s+/).length : 0; charCountSpan.innerText = `${len.toLocaleString()} karakter`; wordCountSpan.innerText = `${wc.toLocaleString()} blok spam`; }
+        function renderOutput(text) { currentSpamResult = text; outputPreviewDiv.innerText = text; updateStats(text); }
+        function generateSpam() {
+            let base = baseInput.value.trim(); if (!base) return alert("Isi huruf/kata dasar!");
+            let count = parseInt(countInput.value,10); if (isNaN(count) || count <=0) count=1000;
+            let sep = separatorSelect.value, prefixVal = prefixInput.value, suffixVal = suffixInput.value, style = fontStyleSelect.value;
+            let result = generateSpamText(base, count, sep, prefixVal, suffixVal, style);
+            renderOutput(result);
+        }
+        function copyAll() { if(currentSpamResult) navigator.clipboard.writeText(currentSpamResult).then(()=>alert("Tersalin!")); else alert("Kosong"); }
+        function clearAll() { currentSpamResult=""; outputPreviewDiv.innerText="✨ Bersih. Generate ulang."; updateStats(""); }
+        function copyPreview() { if(currentSpamResult) navigator.clipboard.writeText(currentSpamResult); else alert("Tidak ada"); }
+        function updatePreview() { let raw = baseInput.value.trim()||"A"; let styled=applyFontStyle(raw, fontStyleSelect.value); previewTextSpan.innerText=styled; }
+        generateBtn.addEventListener('click', generateSpam);
+        copyBtn.addEventListener('click', copyAll);
+        clearBtn.addEventListener('click', clearAll);
+        copyPreviewBtn.addEventListener('click', copyPreview);
+        baseInput.addEventListener('input', updatePreview);
+        fontStyleSelect.addEventListener('change', updatePreview);
+        updatePreview();
+        setTimeout(() => { if(mainApp.classList.contains('show')) generateSpam(); }, 300);
+    })();
+</script>
+</body>
+</html>
